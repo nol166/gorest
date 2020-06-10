@@ -1,6 +1,9 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
+
 	"github.com/gofiber/fiber"
 )
 
@@ -29,7 +32,24 @@ func getPerson(c *fiber.Ctx) {
 }
 
 func createPerson(c *fiber.Ctx) {
+	collection, err := getMongoDbCollection(dbName, collectionName)
 
+	if err != nil {
+		c.Status(500).Send(err)
+		return
+	}
+
+	var person Person
+	json.Unmarshal([]byte(c.Body()), &person)
+
+	res, err := collection.InsertOne(context.Background(), person)
+	if err != nil {
+		c.Status(500).Send(err)
+		return
+	}
+
+	response, _ := json.Marshal(res)
+	c.Send(response)
 }
 
 func updatePerson(c *fiber.Ctx) {
