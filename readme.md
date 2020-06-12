@@ -1,1 +1,1 @@
-<img src="./gopher.png">
+<img src="./gopher.png" width="250px">
